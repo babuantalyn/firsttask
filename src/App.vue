@@ -73,7 +73,7 @@ if (elevations.value.length > 0) {
     watchEffect(() => {
       extractElevations();
     });
-
+    
     return { elevations, maxElevation, minElevation };
   },
 };
