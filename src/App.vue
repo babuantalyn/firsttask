@@ -33,7 +33,7 @@ export default {
       elevations.value = sites.value.map(feature => feature.properties.elevation);
 
       // Calculate maximum and minimum elevations
-       maxElevation.value = Math.max(...elevations.value);
+      // maxElevation.value = Math.max(...elevations.value);
       //minElevation.value = Math.min(...elevations.value);
 
       //console.log('Elevations:', elevations.value);
