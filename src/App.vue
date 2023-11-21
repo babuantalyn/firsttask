@@ -37,7 +37,7 @@ export default {
       //minElevation.value = Math.min(...elevations.value);
 
       //console.log('Elevations:', elevations.value);
-      console.log('Max Elevation:', maxElevation.value);
+      //console.log('Max Elevation:', maxElevation.value);
       //console.log('Min Elevation:', minElevation.value);
       
     //};
