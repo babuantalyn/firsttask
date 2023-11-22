@@ -1,9 +1,10 @@
 <script>
-import { ref, onMounted, watchEffect } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 
 export default {
   setup() {
     const sites = ref([]);
+    const selectedProperty = ref('');
 
     // Fetch JSON data asynchronously
     const fetchData = async () => {
@@ -32,61 +33,51 @@ export default {
     const extractElevations = () => {
       elevations.value = sites.value.map(feature => feature.properties.elevation);
 
-      // Calculate maximum and minimum elevations
-      // maxElevation.value = Math.max(...elevations.value);
-      //minElevation.value = Math.min(...elevations.value);
+      if (selectedProperty.value === 'elevation') {
+        if (elevations.value.length > 0) {
+          maxElevation.value = elevations.value[0];
+          minElevation.value = elevations.value[0];
 
-      //console.log('Elevations:', elevations.value);
-      //console.log('Max Elevation:', maxElevation.value);
-      //console.log('Min Elevation:', minElevation.value);
-      
-    //};
-
-    // Call extractElevations when sites.value changes
-    //watchEffect(() => {
-      //extractElevations();
-    //});
-
-    //return { elevations, maxElevation, minElevation };
-  //},
-//};
-if (elevations.value.length > 0) {
-        maxElevation.value = elevations.value[0];
-        minElevation.value = elevations.value[0];
-
-        for (let i = 1; i < elevations.value.length; i++) {
-          if (elevations.value[i] > maxElevation.value) {
-            maxElevation.value = elevations.value[i];
-          }
-          if (elevations.value[i] < minElevation.value) {
-            minElevation.value = elevations.value[i];
+          for (let i = 1; i < elevations.value.length; i++) {
+            if (elevations.value[i] > maxElevation.value) {
+              maxElevation.value = elevations.value[i];
+            }
+            if (elevations.value[i] < minElevation.value) {
+              minElevation.value = elevations.value[i];
+            }
           }
         }
+      } else {
+        // Reset max and min elevations if a different property is selected
+        maxElevation.value = null;
+        minElevation.value = null;
       }
-
-      console.log('Elevations:', elevations.value);
-      console.log('Max Elevation:', maxElevation.value);
-      console.log('Min Elevation:', minElevation.value);
     };
 
-    // Call extractElevations when sites.value changes
-    watchEffect(() => {
+    // Watch for changes in sites and selectedProperty to update elevations
+    watch([sites, selectedProperty], () => {
       extractElevations();
     });
 
-    return { elevations, maxElevation, minElevation };
+    return { selectedProperty, maxElevation, minElevation };
   },
 };
 </script>
 
 <template>
-  <div>
-    <h2>Elevation Data</h2>
-    <ul>
-      <!--li v-for="elevation in elevations" :key="elevation">{{ elevation }}</li-->
-    </ul>
-    <p>Maximum Elevation: {{ maxElevation }}</p>
-    <p>Minimum Elevation: {{ minElevation }}</p>
+  <div>   
+    <select class="form-select" aria-label="Default select example" v-model="selectedProperty">
+      <option disabled value="">Select Properties</option>
+      <option value="elevation">elevation</option>
+      <option value="q">q</option>
+      <option value="q_unc">q_unc</option>
+    </select>
+
+    <p>Selected Property: {{ selectedProperty }}</p>
+
+    <div v-if="selectedProperty === 'elevation'">
+      <p>Maximum Elevation: {{ maxElevation }}</p>
+      <p>Minimum Elevation: {{ minElevation }}</p>
+    </div>
   </div>
 </template>
-
