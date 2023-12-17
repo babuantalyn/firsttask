@@ -1,7 +1,27 @@
 <script>
 import { ref, onMounted, watch } from 'vue';
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+import {
+  CTable,
+  CTableHead,
+  CTableBody,
+  CTableHeaderCell,
+  CTableRow,
+  CTableDataCell,
+  
+} from '@coreui/bootstrap-vue';
 
 export default {
+  components: {
+    CTable,
+    CTableHead,
+    CTableBody,
+    CTableHeaderCell,
+    CTableRow,
+    CTableDataCell,
+  
+  },
   setup() {
     const sites = ref([]);
     const selectedProperty = ref('');
@@ -81,7 +101,7 @@ export default {
 }
 
 
-const elevationMinMax = ref({ min: null, max: null });
+    const elevationMinMax = ref({ min: null, max: null });
     const qMinMax = ref({ min: null, max: null });
     const q_uncMinMax = ref({ min: null, max: null });
     const wat_tempMinMax = ref({ min: null, max: null });
@@ -141,6 +161,7 @@ const elevationMinMax = ref({ min: null, max: null });
     return { selectedProperty, maxElevation, minElevation };
   },
 };*/
+
 </script>
 
 <template>
@@ -176,4 +197,39 @@ const elevationMinMax = ref({ min: null, max: null });
     </div>
 
   </div>
+  <div>
+  <CTable v-if="selectedProperty">
+      <CTableHead>
+        <CTableRow>
+          <CTableHeaderCell scope="col">Property</CTableHeaderCell>
+          <CTableHeaderCell scope="col">Minimum</CTableHeaderCell>
+          <CTableHeaderCell scope="col">Maximum</CTableHeaderCell>
+        </CTableRow>
+      </CTableHead>
+      <CTableBody>
+        <CTableRow v-if="selectedProperty === 'elevation'">
+          <CTableHeaderCell scope="row">Elevation</CTableHeaderCell>
+          <CTableDataCell>{{ elevationMinMax.min }}</CTableDataCell>
+          <CTableDataCell>{{ elevationMinMax.max }}</CTableDataCell>
+        </CTableRow>
+        <CTableRow v-else-if="selectedProperty === 'q'">
+          <CTableHeaderCell scope="row">q</CTableHeaderCell>
+          <CTableDataCell>{{ qMinMax.min }}</CTableDataCell>
+          <CTableDataCell>{{ qMinMax.max }}</CTableDataCell>
+        </CTableRow>
+        <CTableRow v-else-if="selectedProperty === 'q_unc'">
+          <CTableHeaderCell scope="row">q_unc</CTableHeaderCell>
+          <CTableDataCell>{{ q_uncMinMax.min }}</CTableDataCell>
+          <CTableDataCell>{{ q_uncMinMax.max }}</CTableDataCell>
+        </CTableRow>
+        <CTableRow v-else-if="selectedProperty === 'wat_temp'">
+          <CTableHeaderCell scope="row">wat_temp</CTableHeaderCell>
+          <CTableDataCell>{{ wat_tempMinMax.min }}</CTableDataCell>
+          <CTableDataCell>{{ wat_tempMinMax.max }}</CTableDataCell>
+        </CTableRow>
+      </CTableBody>
+    </CTable>
+  </div>
+
+
 </template>
