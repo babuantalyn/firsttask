@@ -1,6 +1,7 @@
 <script>
 import { ref, onMounted, watch } from 'vue';
 import 'bootstrap/dist/css/bootstrap.min.css'
+import Plotly from 'plotly.js-dist';
 
 import {
   CTable,
@@ -69,6 +70,7 @@ export default {
     }
     const extractq = () => {
       q.value = sites.value.map(feature => feature.properties.q);
+  
     }
     const extractq_unc = () => {
       q_unc.value = sites.value.map(feature => feature.properties.q_unc);
@@ -118,12 +120,58 @@ export default {
       }
     });
 
+  // Plotly logic
+  const plotContainer = ref(null);
+  
+  watch(selectedProperty, () => {
+    if (selectedProperty.value === 'q') {
+      qMinMax.value = findMinMax(q.value);
+      const trace = {
+        x: q.value,
+        type: 'histogram',
+      };
+      const data = [trace];
+      Plotly.newPlot('myDiv', data);
+    } else if (selectedProperty.value === 'q_unc') {
+      
+      q_uncMinMax.value = findMinMax(q_unc.value);
+      const trace = {
+        x: q_unc.value,
+        type: 'histogram',
+      };
+      const data = [trace];
+      Plotly.newPlot('myDiv', data);
+    } else if (selectedProperty.value === 'wat_temp') {
+      
+      wat_tempMinMax.value = findMinMax(wat_temp.value);
+      const trace = {
+        x: wat_temp.value,
+        type: 'histogram',
+      };
+      const data = [trace];
+      Plotly.newPlot('myDiv', data);
+    } else if (selectedProperty.value === 'elevation') {
+      
+      elevationMinMax.value = findMinMax(elevations.value);
+      const trace = {
+        x: elevations.value,
+        type: 'histogram',
+      };
+      const data = [trace];
+      Plotly.newPlot('myDiv', data);
+    }
+
+  });
+
+    
+
     return {
       selectedProperty,
       elevationMinMax,
       qMinMax,
       q_uncMinMax,
-      wat_tempMinMax
+      wat_tempMinMax,
+      plotContainer,
     };
   },
 };
@@ -161,7 +209,6 @@ export default {
     return { selectedProperty, maxElevation, minElevation };
   },
 };*/
-
 </script>
 
 <template>
@@ -231,5 +278,6 @@ export default {
     </CTable>
   </div>
 
-
+  <div id="myDiv" style="width: 600px; height: 400px;"></div>
+  
 </template>
