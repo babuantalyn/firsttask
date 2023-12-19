@@ -21,8 +21,8 @@ export default {
     CTableHeaderCell,
     CTableRow,
     CTableDataCell,
-  
   },
+
   setup() {
     const sites = ref([]);
     const selectedProperty = ref('');
@@ -55,22 +55,12 @@ export default {
     const q_unc = ref([]);
     const wat_temp = ref([]);   
 
-     /*Maximum and minimum elevations
-    const MaxElevation = ref(null);
-    const minElevation = ref(null);
-    const maxq = ref(null);
-    const minq = ref(null);
-    const maxq_unc = ref(null);
-    const minq_unc = ref(null);
-    const minwat_temp = ref(null);
-    const maxwat_temp = ref(null);*/
 
     const extractElevations = () => {
       elevations.value = sites.value.map(feature => feature.properties.elevation);
     }
     const extractq = () => {
       q.value = sites.value.map(feature => feature.properties.q);
-  
     }
     const extractq_unc = () => {
       q_unc.value = sites.value.map(feature => feature.properties.q_unc);
@@ -78,6 +68,7 @@ export default {
     const extractwat_temp = () => {
       wat_temp.value = sites.value.map(feature => feature.properties.wat_temp);
     }
+
 
   function findMinMax(arr) {
 
@@ -163,8 +154,6 @@ export default {
 
   });
 
-    
-
     return {
       selectedProperty,
       elevationMinMax,
@@ -176,39 +165,6 @@ export default {
   },
 };
    
-/*
-    const extractElevations = () => {
-      elevations.value = sites.value.map(feature => feature.properties.elevation);
-
-      if (selectedProperty.value === 'elevation') {
-        if (elevations.value.length > 0) {
-          maxElevation.value = elevations.value[0];
-          minElevation.value = elevations.value[0];
-
-          for (let i = 1; i < elevations.value.length; i++) {
-            if (elevations.value[i] > maxElevation.value) {
-              maxElevation.value = elevations.value[i];
-            }
-            if (elevations.value[i] < minElevation.value) {
-              minElevation.value = elevations.value[i];
-            }
-          }
-        }
-      } else {
-        // Reset max and min elevations if a different property is selected
-        maxElevation.value = null;
-        minElevation.value = null;
-      }
-    };
-
-    // Watch for changes in sites and selectedProperty to update elevations
-    watch([sites, selectedProperty], () => {
-      extractElevations();
-    });
-
-    return { selectedProperty, maxElevation, minElevation };
-  },
-};*/
 </script>
 
 <template>
@@ -244,6 +200,7 @@ export default {
     </div>
 
   </div>
+
   <div>
   <CTable v-if="selectedProperty">
       <CTableHead>
