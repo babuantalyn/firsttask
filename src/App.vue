@@ -34,10 +34,14 @@ export default {
         const data = await response.json();
         sites.value = data.features || [];
         console.log('Fetched Data:', sites.value);
-        extractElevations();
+        /*extractElevations();
         extractq();
         extractq_unc();
-        extractwat_temp();
+        extractwat_temp();*/
+        extractPropertyData('elevation', elevations);
+        extractPropertyData('q', q);
+        extractPropertyData('q_unc', q_unc);
+        extractPropertyData('wat_temp', wat_temp);
 
       } catch (error) {
         console.error('Error fetching JSON data:', error);
@@ -53,10 +57,14 @@ export default {
     const elevations = ref([]);
     const q = ref([]);
     const q_unc = ref([]);
-    const wat_temp = ref([]);   
+    const wat_temp = ref([]);  
 
+//write function 
+const extractPropertyData = (propertyName, targetRef) => {
+    targetRef.value = sites.value.map(feature => feature.properties[propertyName]);
+  };
 
-    const extractElevations = () => {
+  /*  const extractElevations = () => {
       elevations.value = sites.value.map(feature => feature.properties.elevation);
     }
     const extractq = () => {
@@ -67,7 +75,7 @@ export default {
     }
     const extractwat_temp = () => {
       wat_temp.value = sites.value.map(feature => feature.properties.wat_temp);
-    }
+    }*/
 
 
   function findMinMax(arr) {
@@ -93,6 +101,15 @@ export default {
   return { min, max };
 }
 
+const plotGraph = (dataArr, refValue) => {
+    refValue.value = findMinMax(dataArr);
+    const trace = {
+      x: dataArr,
+      type: 'histogram',
+    };
+    const data = [trace];
+    Plotly.newPlot('myDiv', data);
+  };
 
     const elevationMinMax = ref({ min: null, max: null });
     const qMinMax = ref({ min: null, max: null });
@@ -114,7 +131,7 @@ export default {
   // Plotly logic
   const plotContainer = ref(null);
   
-  watch(selectedProperty, () => {
+  /*watch(selectedProperty, () => {
     if (selectedProperty.value === 'q') {
       qMinMax.value = findMinMax(q.value);
       const trace = {
@@ -152,6 +169,20 @@ export default {
       Plotly.newPlot('myDiv', data);
     }
 
+    
+
+  });*/
+  
+  watch(selectedProperty, () => {
+    if (selectedProperty.value === 'q') {
+      plotGraph(q.value, qMinMax);
+    } else if (selectedProperty.value === 'q_unc') {
+      plotGraph(q_unc.value, q_uncMinMax);
+    } else if (selectedProperty.value === 'wat_temp') {
+      plotGraph(wat_temp.value, wat_tempMinMax);
+    } else if (selectedProperty.value === 'elevation') {
+      plotGraph(elevations.value, elevationMinMax);
+    }
   });
 
     return {
