@@ -23,6 +23,38 @@ export default {
     CTableDataCell,
   },
 
+  methods: {
+    async handleClick() {
+      try {
+        // Fetch JSON data from the file
+        const response = await fetch('../src/assets/data/small_sites.json');
+        const jsonData = await response.json();
+
+        // Convert JSON object to a string
+        const jsonString = JSON.stringify(jsonData, null, 2);
+
+        // Create a Blob with the JSON content
+        const blob = new Blob([jsonString], { type: 'application/json' });
+
+        // Create a link element
+        const link = document.createElement('a');
+
+        // Set the download attribute and create an object URL
+        link.download = 'small_sites.json';
+        link.href = window.URL.createObjectURL(blob);
+
+        // Append the link to the body and click it programmatically
+        document.body.appendChild(link);
+        link.click();
+
+        // Remove the link from the body
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('Error fetching or processing JSON:', error);
+      }
+    },
+  },
+
   setup() {
     const sites = ref([]);
     const selectedProperty = ref('');
@@ -38,6 +70,7 @@ export default {
         extractq();
         extractq_unc();
         extractwat_temp();*/
+        //call  function 
         extractPropertyData('elevation', elevations);
         extractPropertyData('q', q);
         extractPropertyData('q_unc', q_unc);
@@ -76,7 +109,6 @@ const extractPropertyData = (propertyName, targetRef) => {
     const extractwat_temp = () => {
       wat_temp.value = sites.value.map(feature => feature.properties.wat_temp);
     }*/
-
 
   function findMinMax(arr) {
 
@@ -267,5 +299,5 @@ const plotGraph = (dataArr, refValue) => {
   </div>
 
   <div id="myDiv" style="width: 600px; height: 400px;"></div>
-  
+  <button @click="handleClick">Download</button>
 </template>
