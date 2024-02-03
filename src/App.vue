@@ -2,13 +2,17 @@
 import { ref, onMounted, watch } from "vue";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Plotly from "plotly.js-dist";
-
 import { useStatisticsStore } from '../src/stores/StatisticsStore';
 
-const myStore = useStatisticsStore();
-const values = myStore.getAllValues();
+const statisticsStore = useStatisticsStore();
+console.log(statisticsStore.nameOfStatisticStore)
+
+statisticsStore.nameOfStatisticStore = "peter";
+console.log(statisticsStore.nameOfStatisticStore)
 
 
+console.log('Max Values:', statisticsStore.maxValues);
+console.log('Name of Statistic Store:', statisticsStore.nameOfStatisticStore);
 
 import {
   CTable,
@@ -72,6 +76,7 @@ const fetchData = async () => {
 // Call fetchData on component mount
 onMounted(async () => {
   data.value = await fetchData();
+  properties.value.forEach(property => setRange(property));
 });
 
 // Extract of data
@@ -99,6 +104,32 @@ function setRange(selectedProperty) {
   let values = extractPropertyData(selectedProperty);
   range.value.min = Math.floor(Math.min.apply(null, values));
   range.value.max = Math.ceil(Math.max.apply(null, values));
+  
+  statisticsStore.maxValues[selectedProperty] = range.value.max;
+  statisticsStore.minValues[selectedProperty] = range.value.min;
+
+  statisticsStore.selectedPropertyName = selectedProperty;
+}
+
+function downloadPlotAsPNG() {
+  // Use Plotly's toImage function to generate a base64 PNG image
+  Plotly.toImage("myDiv", { format: "png", height: 600, width: 800 })
+    .then(function (url) {
+      // Create a temporary link element
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "plot.png"; // Specify the file name
+      statisticsStore.plotImageUrl = url;
+      // Append the link to the body and click it programmatically
+      document.body.appendChild(link);
+      link.click();
+
+      // Remove the link from the body
+      document.body.removeChild(link);
+    })
+    .catch(function (err) {
+      console.error("Error downloading plot:", err);
+    });
 }
 </script>
 
@@ -135,11 +166,10 @@ function setRange(selectedProperty) {
       </CTableHead>
       <CTableBody>
         <CTableRow>
-          <CTableHeaderCell scope="row">{{
-            selectedProperty
-          }}</CTableHeaderCell>
+          <CTableHeaderCell scope="row">{{ selectedProperty}}</CTableHeaderCell>
           <CTableDataCell>{{ range.min }}</CTableDataCell>
           <CTableDataCell>{{ range.max }}</CTableDataCell>
+
         </CTableRow>
       </CTableBody>
     </CTable>
@@ -149,7 +179,14 @@ function setRange(selectedProperty) {
   <button @click="handleClick">Download</button>
   
   <div>
-    <p>{{ values.trialValue }}</p>
+      <p>Selected Property: {{ statisticsStore.selectedPropertyName }}</p>
+      <p>Maximum {{ statisticsStore.selectedPropertyName }}: {{ statisticsStore.maxPropertyValue }}</p>
+      <p>Minimum {{ statisticsStore.selectedPropertyName }}: {{ statisticsStore.minPropertyValue }}</p>
   </div>
-  
+
+<button @click="downloadPlotAsPNG">Download Plot as PNG</button>
+
+<div id="myDiv"></div>
+<img :src="statisticsStore.plotImageUrl" alt="Generated Plot" v-if="statisticsStore.plotImageUrl">
+
   </template>
