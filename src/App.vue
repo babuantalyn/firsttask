@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Plotly from "plotly.js-dist";
 import { useStatisticsStore } from '../src/stores/StatisticsStore';
@@ -7,12 +7,6 @@ import { useStatisticsStore } from '../src/stores/StatisticsStore';
 const statisticsStore = useStatisticsStore();
 console.log(statisticsStore.nameOfStatisticStore)
 
-statisticsStore.nameOfStatisticStore = "peter";
-console.log(statisticsStore.nameOfStatisticStore)
-
-
-console.log('Max Values:', statisticsStore.maxValues);
-console.log('Name of Statistic Store:', statisticsStore.nameOfStatisticStore);
 
 import {
   CTable,
@@ -54,6 +48,7 @@ async function handleClick()  {
 
         // Remove the link from the body
         document.body.removeChild(link);
+        
       } catch (error) {
         console.error('Error fetching or processing JSON:', error);
       }
@@ -179,12 +174,12 @@ function downloadPlotAsPNG() {
   <button @click="handleClick">Download</button>
   
   <div>
-      <p>Selected Property: {{ statisticsStore.selectedPropertyName }}</p>
-      <p>Maximum {{ statisticsStore.selectedPropertyName }}: {{ statisticsStore.maxPropertyValue }}</p>
-      <p>Minimum {{ statisticsStore.selectedPropertyName }}: {{ statisticsStore.minPropertyValue }}</p>
+      <p>pinia Selected Property: {{ statisticsStore.selectedPropertyName }}</p>
+      <p>pinia Maximum {{ statisticsStore.selectedPropertyName }}: {{ statisticsStore.maxPropertyValue }}</p>
+      <p>pinia Minimum {{ statisticsStore.selectedPropertyName }}: {{ statisticsStore.minPropertyValue }}</p>
   </div>
 
-<button @click="downloadPlotAsPNG">Download Plot as PNG</button>
+<button @click="downloadPlotAsPNG">pinia Download Plot as PNG</button>
 
 <div id="myDiv"></div>
 <img :src="statisticsStore.plotImageUrl" alt="Generated Plot" v-if="statisticsStore.plotImageUrl">
