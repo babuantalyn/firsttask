@@ -1,58 +1,18 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import "bootstrap/dist/css/bootstrap.min.css";
 import Plotly from "plotly.js-dist";
 import { useStatisticsStore } from '../src/stores/StatisticsStore';
 
 const statisticsStore = useStatisticsStore();
 console.log(statisticsStore.nameOfStatisticStore)
 
-
-import {
-  CTable,
-  CTableHead,
-  CTableBody,
-  CTableHeaderCell,
-  CTableRow,
-  CTableDataCell,
-} from "@coreui/bootstrap-vue";
+import StatisticsTable from './StatisticsTable.vue';
+import Downloadbutton from "./Downloadbutton.vue";
 
 const sites = ref([]);
 const selectedProperty = ref("");
 const data = ref(null);
 const range = ref({ min: null, max: null });
-
-
-async function handleClick()  {
-      try {
-        // Fetch JSON data from the file
-        const response = await fetch('../src/assets/data/small_sites.json');
-        const jsonData = await response.json();
-
-        // Convert JSON object to a string
-        const jsonString = JSON.stringify(jsonData, null, 2);
-
-        // Create a Blob with the JSON content
-        const blob = new Blob([jsonString], { type: 'application/json' });
-
-        // Create a link element
-        const link = document.createElement('a');
-
-        // Set the download attribute and create an object URL
-        link.download = 'small_sites.json';
-        link.href = window.URL.createObjectURL(blob);
-
-        // Append the link to the body and click it programmatically
-        document.body.appendChild(link);
-        link.click();
-
-        // Remove the link from the body
-        document.body.removeChild(link);
-        
-      } catch (error) {
-        console.error('Error fetching or processing JSON:', error);
-      }
-    }
 
 
 // notes
@@ -150,25 +110,6 @@ function downloadPlotAsPNG() {
     </div>
   </div>
 
-  <div>
-    <CTable v-if="selectedProperty">
-      <CTableHead>
-        <CTableRow>
-          <CTableHeaderCell scope="col">Property</CTableHeaderCell>
-          <CTableHeaderCell scope="col">Minimum</CTableHeaderCell>
-          <CTableHeaderCell scope="col">Maximum</CTableHeaderCell>
-        </CTableRow>
-      </CTableHead>
-      <CTableBody>
-        <CTableRow>
-          <CTableHeaderCell scope="row">{{ selectedProperty}}</CTableHeaderCell>
-          <CTableDataCell>{{ range.min }}</CTableDataCell>
-          <CTableDataCell>{{ range.max }}</CTableDataCell>
-
-        </CTableRow>
-      </CTableBody>
-    </CTable>
-  </div>
 
    <div id="myDiv" style="width: 600px; height: 400px;"></div>
   <button @click="handleClick">Download</button>
@@ -183,5 +124,8 @@ function downloadPlotAsPNG() {
 
 <div id="myDiv"></div>
 <img :src="statisticsStore.plotImageUrl" alt="Generated Plot" v-if="statisticsStore.plotImageUrl">
+
+<StatisticsTable/>
+<Downloadbutton/>
 
   </template>
