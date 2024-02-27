@@ -22,15 +22,11 @@ const selectedProperty = ref("");
 const data = ref(null);
 const range = ref({ min: null, max: null });
 
-
-async function handleClick()  {
-      try {
-        // Fetch JSON data from the file
-        const response = await fetch('../src/assets/data/small_sites.json');
-        const jsonData = await response.json();
+function handleClick()  {
+       
 
         // Convert JSON object to a string
-        const jsonString = JSON.stringify(jsonData, null, 2);
+        const jsonString = JSON.stringify(data.value, null, 2);
 
         // Create a Blob with the JSON content
         const blob = new Blob([jsonString], { type: 'application/json' });
@@ -49,10 +45,7 @@ async function handleClick()  {
         // Remove the link from the body
         document.body.removeChild(link);
         
-      } catch (error) {
-        console.error('Error fetching or processing JSON:', error);
-      }
-    }
+}
 
 
 // notes
