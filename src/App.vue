@@ -9,7 +9,7 @@ console.log(statisticsStore.nameOfStatisticStore)
 import StatisticsTable from './StatisticsTable.vue';
 import Downloadbutton from "./Downloadbutton.vue";
 
-const sites = ref([]);
+
 const selectedProperty = ref("");
 const data = ref(null);
 const range = ref({ min: null, max: null });
@@ -55,37 +55,19 @@ function extractPropertyData(selectedProperty) {
   return array;
 }
 
+
 // get and set min and max of selected property
 function setRange(selectedProperty) {
   let values = extractPropertyData(selectedProperty);
   range.value.min = Math.floor(Math.min.apply(null, values));
   range.value.max = Math.ceil(Math.max.apply(null, values));
-  
+
+  // Update the max and min values in the Pinia store (statisticsStore)
   statisticsStore.maxValues[selectedProperty] = range.value.max;
   statisticsStore.minValues[selectedProperty] = range.value.min;
 
+  // Update the selected property in the Pinia store
   statisticsStore.selectedPropertyName = selectedProperty;
-}
-
-function downloadPlotAsPNG() {
-  // Use Plotly's toImage function to generate a base64 PNG image
-  Plotly.toImage("myDiv", { format: "png", height: 600, width: 800 })
-    .then(function (url) {
-      // Create a temporary link element
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "plot.png"; // Specify the file name
-      statisticsStore.plotImageUrl = url;
-      // Append the link to the body and click it programmatically
-      document.body.appendChild(link);
-      link.click();
-
-      // Remove the link from the body
-      document.body.removeChild(link);
-    })
-    .catch(function (err) {
-      console.error("Error downloading plot:", err);
-    });
 }
 </script>
 
@@ -106,8 +88,8 @@ function downloadPlotAsPNG() {
     <p>Selected Property: {{ selectedProperty }}</p>
 
     <div>
-      <p>Maximum {{ selectedProperty }}: {{ range.max }}</p>
-      <p>Minimum {{ selectedProperty }}: {{ range.min }}</p>
+      <p v-if="selectedProperty">Maximum {{ selectedProperty }}: {{ range.max }}</p>
+      <p v-if="selectedProperty">Minimum {{ selectedProperty }}: {{ range.min }}</p>
     </div>
   </div>
 
