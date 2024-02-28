@@ -68,9 +68,13 @@ function setRange(selectedProperty) {
 }
 
 
+
 </script>
 
 <template>
+
+
+
   <div>
     <select
       class="form-select"
@@ -92,21 +96,23 @@ function setRange(selectedProperty) {
     </div>
   </div>
 
-
-  
   
   <div>
       <p>pinia Selected Property: {{ statisticsStore.selectedPropertyName }}</p>
       <p>pinia Maximum {{ statisticsStore.selectedPropertyName }}: {{ statisticsStore.maxPropertyValue }}</p>
       <p>pinia Minimum {{ statisticsStore.selectedPropertyName }}: {{ statisticsStore.minPropertyValue }}</p>
   </div>
-
+  
+<div id="myDiv" style="width: 600px; height: 400px;"></div>
 <button @click="downloadPlotAsPNG">pinia Download Plot as PNG</button>
 
-<div id="myDiv"></div>
+
 <img :src="statisticsStore.plotImageUrl" alt="Generated Plot" v-if="statisticsStore.plotImageUrl">
 
 <StatisticsTable/>
 <Downloadbutton/>
 <StatisticsGraph/>
+
+
+
   </template>
