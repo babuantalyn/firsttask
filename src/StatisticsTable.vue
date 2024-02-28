@@ -16,9 +16,9 @@ import {
     <CTable v-if="selectedProperty">
       <CTableHead>
         <CTableRow>
-          <CTableHeaderCell scope="col">Property</CTableHeaderCell>
-          <CTableHeaderCell scope="col">Minimum</CTableHeaderCell>
-          <CTableHeaderCell scope="col">Maximum</CTableHeaderCell>
+          <CTableHeaderCell scope="col">Property </CTableHeaderCell>
+          <CTableHeaderCell scope="col">Minimum </CTableHeaderCell>
+          <CTableHeaderCell scope="col">Maximum </CTableHeaderCell>
         </CTableRow>
       </CTableHead>
       <CTableBody>

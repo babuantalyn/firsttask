@@ -31,6 +31,6 @@ export default {
 <template>
     
   <div id="myDiv" style="width: 600px; height: 400px;"></div>
-  <button @click="handleClick">Download</button>
+  <button @click="handleClick">Download check</button>
     
 </template>

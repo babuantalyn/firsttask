@@ -1,4 +1,5 @@
 <script setup>
+
 import { ref, onMounted } from "vue";
 import Plotly from "plotly.js-dist";
 import { useStatisticsStore } from '../src/stores/StatisticsStore';
@@ -8,15 +9,11 @@ console.log(statisticsStore.nameOfStatisticStore)
 
 import StatisticsTable from './StatisticsTable.vue';
 import Downloadbutton from "./Downloadbutton.vue";
-
+import StatisticsGraph from "./StatisticsGraph.vue";
 
 const selectedProperty = ref("");
 const data = ref(null);
 const range = ref({ min: null, max: null });
-
-
-
-// notes
 const properties = ref(["elevation", "q", "q_unc", "wat_temp"]);
 
 // Fetch JSON data asynchronously
@@ -69,6 +66,8 @@ function setRange(selectedProperty) {
   // Update the selected property in the Pinia store
   statisticsStore.selectedPropertyName = selectedProperty;
 }
+
+
 </script>
 
 <template>
@@ -94,8 +93,7 @@ function setRange(selectedProperty) {
   </div>
 
 
-   <div id="myDiv" style="width: 600px; height: 400px;"></div>
-  <button @click="handleClick">Download</button>
+  
   
   <div>
       <p>pinia Selected Property: {{ statisticsStore.selectedPropertyName }}</p>
@@ -110,5 +108,5 @@ function setRange(selectedProperty) {
 
 <StatisticsTable/>
 <Downloadbutton/>
-
+<StatisticsGraph/>
   </template>
