@@ -1,4 +1,4 @@
-<script>
+<script setup>
 import { ref, onMounted } from "vue";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
@@ -10,17 +10,12 @@ import {
   CTableDataCell,
 } from "@coreui/bootstrap-vue";
 
+const selectedProperty = ref("");
+const data = ref(null);
+const range = ref({ min: null, max: null });
+const properties = ref(["elevation", "q", "q_unc", "wat_temp"]);
 
-
-export default {
-  setup() {
-    const selectedProperty = ref("");
-    const data = ref(null);
-    const range = ref({ min: null, max: null });
-    const properties = ref(["elevation", "q", "q_unc", "wat_temp"]);
-
-
-    const fetchData = async () => {
+const fetchData = async () => {
   try {
     const response = await fetch("../src/assets/data/small_sites.json");
     return await response.json();
@@ -29,38 +24,23 @@ export default {
   }
 };
 
-      onMounted(async () => {
-      data.value = await fetchData();
-      setRange(properties.value[0]); 
-    });
-
-
-
-    // change data structure to array
-    function extractPropertyData(selectedProperty) {
-      let array = data.value.features.map(
-      (feature) => feature.properties[selectedProperty]
-      );
-
-      return array;
-    }
-
-    function setRange(selectedProperty) {
-     let values = extractPropertyData(selectedProperty);
-     range.value.min = Math.floor(Math.min.apply(null, values));
-     range.value.max = Math.ceil(Math.max.apply(null, values));
-  }
-
-    return {
-      selectedProperty,
-      data,
-      range,
-      properties,
-      setRange,
-      extractPropertyData,
-    };
-  },
+const extractPropertyData = (selectedProperty) => {
+  let array = data.value.features.map(
+    (feature) => feature.properties[selectedProperty]
+  );
+  return array;
 };
+
+const setRange = (selectedProperty) => {
+  let values = extractPropertyData(selectedProperty);
+  range.value.min = Math.floor(Math.min(...values));
+  range.value.max = Math.ceil(Math.max(...values));
+};
+
+onMounted(async () => {
+  data.value = await fetchData();
+  setRange(properties.value[0]);
+});
 
 </script>
 
@@ -86,7 +66,6 @@ export default {
     </div>
   </div>
 
-  
   <div>
     <CTable v-if="selectedProperty" class="table table-bordered">
       <CTableHead>
@@ -105,5 +84,4 @@ export default {
       </CTableBody>
     </CTable>
   </div>
-
 </template>

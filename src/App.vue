@@ -7,9 +7,9 @@ import { useStatisticsStore } from '../src/stores/StatisticsStore';
 const statisticsStore = useStatisticsStore();
 console.log(statisticsStore.nameOfStatisticStore)
 
-import StatisticsTable from './StatisticsTable.vue';
-import Downloadbutton from "./Downloadbutton.vue";
-import StatisticsGraph from "./StatisticsGraph.vue";
+import StatisticsTable from './components/StatisticsTable.vue';
+import Downloadbutton from "./components/downloadbutton.vue";
+import StatisticsGraph from "./components/StatisticsGraph.vue";
 
 const selectedProperty = ref("");
 const data = ref(null);
