@@ -8,6 +8,8 @@ export const useStatisticsStore = defineStore("statisticStore", () => {
   const selectedPropertyName = ref(null);
   const plotImageUrl = ref(null);
   
+
+
   return {
     nameOfStatisticStore,
     maxValues,
@@ -17,4 +19,5 @@ export const useStatisticsStore = defineStore("statisticStore", () => {
     maxPropertyValue: computed(() => selectedPropertyName.value ? maxValues.value[selectedPropertyName.value] : null),
     minPropertyValue: computed(() => selectedPropertyName.value ? minValues.value[selectedPropertyName.value] : null),
   };
+  
 });

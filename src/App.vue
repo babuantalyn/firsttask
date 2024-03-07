@@ -5,7 +5,9 @@ import Plotly from "plotly.js-dist";
 import { useStatisticsStore } from '../src/stores/StatisticsStore';
 
 const statisticsStore = useStatisticsStore();
-console.log(statisticsStore.nameOfStatisticStore)
+
+console.log('maximumpini', statisticsStore.maxValues);
+console.log('selectedpro',statisticsStore.selectedPropertyName);
 
 import StatisticsTable from './components/StatisticsTable.vue';
 import Downloadbutton from "./components/downloadbutton.vue";
@@ -37,6 +39,7 @@ function plotGraph(selectedProperty) {
   let dataArr = extractPropertyData(selectedProperty);
   const trace = {
     x: dataArr,
+
     type: "histogram",
   };
   const data = [trace];
@@ -52,9 +55,10 @@ function extractPropertyData(selectedProperty) {
   return array;
 }
 
-
 // get and set min and max of selected property
 function setRange(selectedProperty) {
+  console.log('Selected Property:', selectedProperty);
+
   let values = extractPropertyData(selectedProperty);
   range.value.min = Math.floor(Math.min.apply(null, values));
   range.value.max = Math.ceil(Math.max.apply(null, values));
@@ -65,9 +69,9 @@ function setRange(selectedProperty) {
 
   // Update the selected property in the Pinia store
   statisticsStore.selectedPropertyName = selectedProperty;
+  console.log('Selected Property pinia:',selectedProperty);
+
 }
-
-
 
 </script>
 
@@ -88,9 +92,9 @@ function setRange(selectedProperty) {
       </option>
     </select>
 
-    <p>Selected Property: {{ selectedProperty }}</p>
 
     <div>
+      <p v-if="selectedProperty">Selected Property: {{ selectedProperty }}</p>
       <p v-if="selectedProperty">Maximum {{ selectedProperty }}: {{ range.max }}</p>
       <p v-if="selectedProperty">Minimum {{ selectedProperty }}: {{ range.min }}</p>
     </div>
@@ -98,14 +102,14 @@ function setRange(selectedProperty) {
 
   
   <div>
-      <p>pinia Selected Property: {{ statisticsStore.selectedPropertyName }}</p>
-      <p>pinia Maximum {{ statisticsStore.selectedPropertyName }}: {{ statisticsStore.maxPropertyValue }}</p>
-      <p>pinia Minimum {{ statisticsStore.selectedPropertyName }}: {{ statisticsStore.minPropertyValue }}</p>
+      <p v-if="selectedProperty">pinia Selected Property: {{ statisticsStore.selectedPropertyName }}</p>
+      <p v-if="selectedProperty">pinia Maximum {{ statisticsStore.selectedPropertyName }}: {{ statisticsStore.maxPropertyValue }}</p>
+      <p v-if="selectedProperty">pinia Minimum {{ statisticsStore.selectedPropertyName }}: {{ statisticsStore.minPropertyValue }}</p>
   </div>
   
 <div id="myDiv" style="width: 600px; height: 400px;"></div>
-<button @click="downloadPlotAsPNG">pinia Download Plot as PNG</button>
 
+<button @click="downloadPlotAsPNG">pinia Download Plot as PNG</button>
 
 <img :src="statisticsStore.plotImageUrl" alt="Generated Plot" v-if="statisticsStore.plotImageUrl">
 

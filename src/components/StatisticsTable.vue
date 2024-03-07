@@ -58,9 +58,8 @@ onMounted(async () => {
       </option>
     </select>
 
-    <p>Selected Property: {{ selectedProperty }}</p>
-
     <div>
+      <p v-if="selectedProperty">Selected Property: {{ selectedProperty }}</p>
       <p v-if="selectedProperty">Maximum {{ selectedProperty }}: {{ range.max }}</p>
       <p v-if="selectedProperty">Minimum {{ selectedProperty }}: {{ range.min }}</p>
     </div>
