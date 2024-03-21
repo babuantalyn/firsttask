@@ -42,12 +42,13 @@
           .setLngLat([139.7525,35.6846])
           .addTo(map.value);
   
-        // Initialize Mapbox Draw
         draw = new MapboxDraw({
           displayControlsDefault: false,
           controls: {
             polygon: true,
             trash: true,
+            point: true,   
+            line_string: true,
           },
         });
         map.value.addControl(draw);
@@ -86,8 +87,8 @@
   <style scoped>
   .map-wrap {
     position: relative;
-    width: 100vw; /* Set width to 100vw for fullscreen */
-    height: calc(100vh - 77px); /* Maintain original height */
+    width: 100vw; 
+    height: calc(100vh - 77px); 
   }
   
   .map {
