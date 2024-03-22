@@ -48,7 +48,7 @@
             polygon: true,
             trash: true,
             point: true,   
-            line_string: true,
+            line_string: false,
           },
         });
         map.value.addControl(draw);
