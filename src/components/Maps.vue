@@ -91,7 +91,7 @@ const updateArea = (e) => {
   
   .watermark {
     position: absolute;
-    left: 10px;
+    right: 10px;
     bottom: 10px;
     z-index: 999;
   }
