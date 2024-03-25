@@ -50,6 +50,7 @@ onMounted(() => {
       line_string: false,
     },
   });
+
   map.value.addControl(draw);
 
   map.value.on('draw.create', updateArea);

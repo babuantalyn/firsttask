@@ -5,17 +5,11 @@
   </div>
 </template>
 
-<script>
+<script setup>
+
 import Navbar from './components/Navbar.vue';
 import Maps from './components/Maps.vue';
 
-export default {
-  name: 'App',
-  components: {
-    Navbar,
-    Maps
-  }
-}
 </script>
 
 <style>
