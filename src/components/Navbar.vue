@@ -4,10 +4,8 @@
     </div>
   </template>
   
-  <script>
-  export default {
-    name: 'Navbar'
-  }
+  <script setup>
+ 
   </script>
   
   <style scoped>
