@@ -10,7 +10,10 @@
   },
   "dependencies": {
     "@mapbox/mapbox-gl-draw": "^1.4.3",
+    "@mapbox/point-geometry": "^0.1.0",
     "@turf/turf": "^6.5.0",
+    "leaflet": "^1.9.4",
+    "mapbox-gl": "^3.3.0",
     "maplibre-gl": "^4.1.1",
     "vue": "^3.4.21"
   },
