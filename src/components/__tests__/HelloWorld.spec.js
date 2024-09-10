@@ -1,11 +1,23 @@
-import { describe, it, expect } from 'vitest';
+import { test, expect } from "vitest";
+
+function sum(a, b) {
+  return a + b;
+}
+
+test("add 2 numbers", () => {
+  expect(sum(2,3)).toEqual(5);
+});
 
 import { mount } from '@vue/test-utils';
-import HelloWorld from '../HelloWorld.vue';
+import DistanceComponent from '@/components/left-panel/analysis-panel/DigitalBorehole.vue';
+import * as turf from '@turf/turf';
 
-describe('HelloWorld', () => {
-  it('renders properly', () => {
-    const wrapper = mount(HelloWorld, { props: { msg: 'Hello Vitest' } });
-    expect(wrapper.text()).toContain('Hello Vitest');
+describe('DistanceComponent.vue', () => {
+  it('calculates the correct distance between two points', () => {
+    jest.spyOn(turf, 'distance').mockReturnValue(10); 
+
+    const wrapper = mount(DistanceComponent);
+
+    expect(wrapper.text()).toContain('10 km');
   });
 });

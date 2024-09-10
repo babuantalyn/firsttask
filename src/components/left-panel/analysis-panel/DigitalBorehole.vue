@@ -13,6 +13,8 @@ const lineChart = ref(null);
 
 /**
 * @param {position of the element in the depth array} index
+* @return
+* @discritpion
 */
 
 const getMaxDepth = (index) => {
