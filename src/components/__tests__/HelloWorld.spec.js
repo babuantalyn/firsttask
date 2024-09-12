@@ -1,23 +1,33 @@
-import { test, expect } from "vitest";
 
-function sum(a, b) {
-  return a + b;
-}
+import { describe, it, expect } from 'vitest';
+import { setActivePinia, createPinia } from 'pinia';
+import { useDepthStore } from '@/store/depthstore'; 
 
-test("add 2 numbers", () => {
-  expect(sum(2,3)).toEqual(5);
-});
+describe('depthStore', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
 
-import { mount } from '@vue/test-utils';
-import DistanceComponent from '@/components/left-panel/analysis-panel/DigitalBorehole.vue';
-import * as turf from '@turf/turf';
+  it('should initialize depths correctly', () => {
+    const depthStore = useDepthStore();
+    expect(depthStore.depths).toEqual([10, 20, 30, 40, 50]);
+  });
 
-describe('DistanceComponent.vue', () => {
-  it('calculates the correct distance between two points', () => {
-    jest.spyOn(turf, 'distance').mockReturnValue(10); 
+  it('should update depth correctly', () => {
+    const depthStore = useDepthStore();
+    depthStore.updateDepth(2, 25);
+    expect(depthStore.depths).toEqual([10, 20, 25, 40, 50]);
+  });
 
-    const wrapper = mount(DistanceComponent);
+  it('should not allow depth to be lower than the previous value', () => {
+    const depthStore = useDepthStore();
+    depthStore.updateDepth(2, 5);
+    expect(depthStore.depths).toEqual([10, 20, 10, 40, 50]);
+  });
 
-    expect(wrapper.text()).toContain('10 km');
+  it('should adjust following depths if current depth is not lower than the next depth', () => {
+    const depthStore = useDepthStore();
+    depthStore.updateDepth(2, 35);
+    expect(depthStore.depths).toEqual([10, 20, 34, 40, 50]);
   });
 });

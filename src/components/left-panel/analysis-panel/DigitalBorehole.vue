@@ -7,35 +7,61 @@ import Plotly from 'plotly.js-dist';
 import datapoints from "@/assets/data/heatflow_sample_data.json";
 import { CTooltip } from '@coreui/bootstrap-vue';
 
+import { useDepthStore } from '@/store/depthstore'; 
+const depthStore = useDepthStore();  
+
 const closestPointfeatures = ref(null);
-const depths = ref([10, 20, 30, 40, 50]);
+const K = ref([2.5, 2.6, 2.7, 2.8, 2.9]);  
+const A = ref([0.02, 0.03, 0.04, 0.05, 0.06]);  
 const lineChart = ref(null);
 
+const depthInputs = computed(() =>
+  depthStore.depths.map((depth, index) => ({
+    index,
+    value: depth,
+    max: index < depthStore.depths.length - 1 ? depthStore.depths[index + 1] : Infinity,
+    min: index > 0 ? depthStore.depths[index - 1] : 0,
+  }))
+);
+
+function handleDepthChange(index, newValue) {
+  depthStore.updateDepth(index, newValue);
+}
+
+
 /**
-* @param {position of the element in the depth array} index
-* @return
-* @discritpion
+* @param {number} index
+* @return {number } depths
+* @discritpion {position of the element in the depth array}
 */
 
 const getMaxDepth = (index) => {
-  if (index < depths.value.length - 1) {
-    return depths.value[index + 1] - 1;
+  if (index < depthStore.depths.length - 1) {
+    return depthStore.depths[index + 1] - 1;
   }
   return Infinity; 
 };
 
 /**
-* @param {closest points' q values} q
+* @param {number} q
+* @return {number} T, Z
+* @discritpion {closest points' q values} q
+* @param {number} K
+* @return {number} T, Z
+* @discritpion {conductivity set by user} K
+* @param {number} A
+* @return {number} T,Z
+* @discritpion {heat production set by user} A
 */
 
-const TempCal = (q) => {
-  const k = 0.5;
-  const A = 0.01;
+const TempCal = (q, K, A) => {
   const T0 = 20;
   let T = T0;
 
-  return depths.value.map(Z => {
-    T = T + ((q * Z / k) - (A * (Z * Z) / (2 * k)));
+  return depthStore.depths.map((Z, index) => {
+    const k = K[index];  
+    const a = A[index];  
+    T = T + ((q * Z / k) - (a * (Z * Z) / (2 * k)));  
     return { temperature: T, depth: Z };
   });
 };
@@ -50,9 +76,12 @@ function deletePoint() {
 
 
 /**
-* @param {Point} p1
-* @param {Point} p2
+* @param {number} P1, P2
+* @return {number} distance 
+* @discritpion {coordinates of the point} 
+
 */
+
 
 function calculatedistance(p1, p2) {
   const point1 = turf.point(p1);
@@ -60,10 +89,8 @@ function calculatedistance(p1, p2) {
   return turf.distance(point1, point2);
 }
 
-/**
-* @param {array} data
 
-*/
+
 
 function drawChart(data) {
   const temperature = data.map(d => d.temperature);
@@ -93,7 +120,7 @@ function drawChart(data) {
   }));
 
   const layout = {
-    title: '',
+    title: 'Temperature vs Depth',
     xaxis: {
       title: 'Temperature (°C)',
       side: 'top',
@@ -109,10 +136,10 @@ function drawChart(data) {
   Plotly.newPlot(lineChart.value, [plotData], layout);
 }
 
-watch(() => depths.value, () => {
+watch([depthStore.depths, K, A], () => {
   if (closestPointfeatures.value) {
     const q = closestPointfeatures.value.properties.q;
-    const temperatureData = TempCal(q);
+    const temperatureData = TempCal(q, K.value, A.value);
     drawChart(temperatureData);
   }
 }, { deep: true });
@@ -120,11 +147,6 @@ watch(() => depths.value, () => {
 const props = defineProps({ map: Map });
 const mapControls = useMapControlsStore();
 
-
-/**
-* @param {event object} e
-
-*/
 props.map.on('draw.create', (e) => {
   const pointCoordinates = e.features[0].geometry.coordinates;
 
@@ -142,41 +164,24 @@ props.map.on('draw.create', (e) => {
 
   closestPointfeatures.value = nearestPoint;
   const q = closestPointfeatures.value.properties.q;
-  const temperatureData = TempCal(q);
+  const temperatureData = TempCal(q, K.value, A.value);
   drawChart(temperatureData);
 });
 
 props.map.on('draw.delete', () => {
   closestPointfeatures.value = null;
+  Plotly.purge(lineChart.value);  
 });
 
-props.map.on('draw.update', () => {
-});
+function updateK(index, newValue) {
+  K.value[index] = newValue;
+}
 
-const depthInputs = computed(() => {
-  return depths.value.map((depth, index) => {
-    return {
-      value: depth,
-      max: getMaxDepth(index),
-      index
-    };
-  });
-});
-
-/**
-* @param {position in the depth array} index
-* @param {new value that will be assigned in the depth array} newValue
-
-*/
-
-function updateDepth(index, newValue) {
-  if (index < depths.value.length - 1 && newValue >= depths.value[index + 1]) {
-    depths.value[index] = depths.value[index + 1] - 1;
-  } else {
-    depths.value[index] = newValue;
-  }
+function updateA(index, newValue) {
+  A.value[index] = newValue;
 }
 </script>
+
 
 <template>
   <CTooltip content="Draw Point" placement="bottom">
@@ -219,21 +224,49 @@ function updateDepth(index, newValue) {
     <p>UUID: {{ closestPointfeatures.properties.uuid }}</p>
   </div>
 
+  
   <div>
-    <div v-for="depthInput in depthInputs" :key="depthInput.index">
-      <label :for="'depth' + depthInput.index">Depth {{ depthInput.index + 1 }}:</label>
+    <div v-for="(depthInput, index) in depthInputs" :key="index">
+      <label :for="'depth' + index">Depth {{ index + 1 }}:</label>
       <input
-        :id="'depth' + depthInput.index"
-        v-model.number="depths[depthInput.index]"
+        :id="'depth' + index"
+        :value="depthInput.value"
         :max="depthInput.max"
+        :min="depthInput.min"
         type="number"
         min="0"
-        @input="updateDepth(depthInput.index, $event.target.valueAsNumber)"
+        @input="handleDepthChange(index, $event.target.valueAsNumber)"
+      />
+    </div>
+  </div>
+
+  
+  <div>
+    <div v-for="(k, index) in K" :key="index">
+      <label :for="'K' + index">K {{ index + 1 }}:</label>
+      <input
+        :id="'K' + index"
+        v-model.number="K[index]"
+        type="number"
+        min="0"
+        @input="updateK(index, $event.target.valueAsNumber)"
+      />
+    </div>
+  </div>
+
+  
+  <div>
+    <div v-for="(a, index) in A" :key="index">
+      <label :for="'A' + index">A {{ index + 1 }}:</label>
+      <input
+        :id="'A' + index"
+        v-model.number="A[index]"
+        type="number"
+        min="0"
+        @input="updateA(index, $event.target.valueAsNumber)"
       />
     </div>
   </div>
 
   <div ref="lineChart" style="width: 100%; height: 500px;"></div>
 </template>
-
-
